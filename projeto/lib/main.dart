@@ -12,47 +12,56 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: Container(
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Tarefas'),
+        ),
+        body: ListView(
           children: [
-            Stack(
-              alignment: AlignmentDirectional.center,
+            Task('Aprender Flutter'),
+            Task('A arte da guerra'),
+            Task('O declínio de um homem'),
+            Task('Aprender Java'),
+            Task('Aprender Dart'),
+            Task('Aprender C++'),
+            Task('Aprender Node.Js'),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(onPressed: (){print('botao precionado');}),
+      ),
+    );
+  }
+}
+
+
+
+class Task extends StatelessWidget {
+  final String titulo;
+  const Task(this.titulo, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        child: Stack(
+          children: [
+            Container(color: Colors.blue, height: 140,),
+            Container(color: Colors.white, height: 100, child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(color: Colors.red, height: 100, width: 100,),
-                Container(color: Colors.blue, height: 50, width: 50,),
+                Container(color: Colors.black26, height: 100, width: 72,),
+                Container(
+                    width: 200,
+                    child: Text(titulo, style: TextStyle(fontSize: 20), overflow: TextOverflow.ellipsis,)),
+                ElevatedButton(onPressed: (){}, child: Icon(Icons.arrow_drop_up))
               ],
-            ),
-            Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                Container(color: Colors.blue, height: 100, width: 100,),
-                Container(color: Colors.red, height: 50, width: 50,),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(color: Colors.cyan, height: 50, width: 50,),
-                Container(color: Colors.pinkAccent, height: 50, width: 50,),
-                Container(color: Colors.purple, height: 50, width: 50,),
-              ],
-            ),
-            Container(
-              color: Colors.amber, height: 30, width: 300,
-              child: Text('Hello World', style: TextStyle(color: Colors.black, fontSize: 26, ), textAlign: TextAlign.center,),
-            ),
-            ElevatedButton(onPressed: (){print('Botão apertado');}, child: Text('Aperte o botão'))
+            ),)
           ],
         ),
       ),
     );
   }
 }
-
