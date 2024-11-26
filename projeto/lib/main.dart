@@ -1,19 +1,14 @@
-import 'package:alura/initial_screen.dart';
+import 'package:alura/data/task_inherited.dart';
+import 'package:alura/screens/form_screen.dart';
+import 'package:alura/screens/initial_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool opacidade = true;
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +17,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: InitialScreen(),
+      home: TaskInherited(child: const InitialScreen(),),
     );
   }
 }
