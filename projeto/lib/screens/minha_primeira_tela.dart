@@ -36,9 +36,9 @@ class MyFirstWidget extends StatelessWidget {
           ),
           Container(
             color: Colors.amber, height: 30, width: 300,
-            child: Text('Hello World', style: TextStyle(color: Colors.black, fontSize: 26, ), textAlign: TextAlign.center,),
+            child: const Text('Hello World', style: TextStyle(color: Colors.black, fontSize: 26, ), textAlign: TextAlign.center,),
           ),
-          ElevatedButton(onPressed: (){print('Botão apertado');}, child: Text('Aperte o botão'))
+          ElevatedButton(onPressed: (){}, child: const Text('Aperte o botão'))
         ],
       ),
     );
