@@ -1,10 +1,10 @@
-import 'package:alura/data/task_inherited.dart';
+import 'package:entregar/data/personagem_provider.dart';
 import 'package:flutter/material.dart';
 
 class FormScreen extends StatefulWidget {
-  const FormScreen({super.key, required this.taskContext});
+  const FormScreen({super.key, required this.formContext});
 
-  final BuildContext taskContext;
+  final BuildContext formContext;
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -12,21 +12,23 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController difficultyController = TextEditingController();
-  TextEditingController imageController = TextEditingController();
+  TextEditingController nomeController = TextEditingController();
+  TextEditingController racaController = TextEditingController();
+  TextEditingController forcaController = TextEditingController();
+  TextEditingController imagemController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
-  bool valueValidator(String? value) {
+  bool valueValidate(String? value) {
     if(value!=null && value.isEmpty) {
       return true;
     }
     return false;
   }
-  bool difficultyValidator(String? value) {
+
+  bool valueForcaValidate(String? value) {
     if(value!=null && value.isEmpty) {
-      if(int.parse(value)<1 || int.parse(value)>5) {
+      if(int.parse(forcaController.text)>5 || int.parse(forcaController.text)<1) {
         return true;
       }
     }
@@ -37,137 +39,143 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: const Text('Nova Tarefa', style: TextStyle(color: Colors.white),),
-            backgroundColor: Colors.blue, // Cor da sua escolha
-          ),
-          body: Center(
-            child: SingleChildScrollView(
-              child: Container(
-                height: 650,
-                width: 375,
-                decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 3),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        validator: (String? value) {
-                          if(valueValidator(value)) {
-                            return 'Insira o nome da Tarefa';
-                          }else {
-                            return null;
-                          }
-                        },
-                        controller: nameController,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite sua Tarefa:',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2),
-                          ),
-                          fillColor: Colors.white70,
-                          filled: true,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        validator: (value) {
-                          if(difficultyValidator(value)) {
-                            return 'Insira uma dificuldade entre 1 e 5';
-                          }else {
-                            return null;
-                          }
-                        },
-                        keyboardType: TextInputType.number,
-                        controller: difficultyController,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite a Dificuldade da Tarefa:',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2),
-                          ),
-                          fillColor: Colors.white70,
-                          filled: true,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        validator: (value) {
-                          if(valueValidator(value)) {
-                            return 'Insira um url de imagem';
-                          }else {
-                            return null;
-                          }
-                        },
-                        keyboardType: TextInputType.url,
-                        onChanged: (text) {
-                          setState(() {
-              
-                          });
-                        },
-                        controller: imageController,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          hintText: 'Adicione uma imagem:',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2),
-                          ),
-                          fillColor: Colors.white70,
-                          filled: true,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 72,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: Colors.blue,
-                        border: Border.all(width: 2, color: Colors.blue),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          imageController.text,
-                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                            return Image.asset('assets/images/sem_foto.webp', fit: BoxFit.cover,);
-                          },
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: (){
-                        if(_formKey.currentState!.validate()) {
-                          // print(nameController.text);
-                          // print(int.parse(difficultyController.text));
-                          // print(imageController.text);
-                          TaskInherited.of(widget.taskContext).newTask(nameController.text, int.parse(difficultyController.text), imageController.text);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Salvando nova tarefa.'))
-                          );
-                          Navigator.pop(context);
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Adicionar Personagem'),
+          backgroundColor: Colors.lightGreen,
+        ),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              height: 650,
+              width: 375,
+              decoration: BoxDecoration(
+                color: Colors.lightGreen,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(width: 4),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      validator: (String? value) {
+                        if(valueValidate(value)) {
+                          return 'Insira o nome do personagem';
                         }
+                        return null;
                       },
-                      child: const Text('Adicionar')),
-                  ],
-                ),
+                      keyboardType: TextInputType.text,
+                      controller: nomeController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Nome',
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      validator: (String? value) {
+                        if(valueValidate(value)) {
+                          return 'Insira a raça do personagem';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.text,
+                      controller: racaController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Raça',
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      validator: (value) {
+                        if(valueForcaValidate(value)) {
+                          return 'Insira uma força entre 1 a 5';
+                        }
+                        return null;
+                      },
+                      controller: forcaController,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Força',
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      validator: (String? value) {
+                        if(valueValidate(value)) {
+                          return 'Insira uma url de imagem';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.url,
+                      onChanged: (text){
+                        setState(() {
+            
+                        });
+                      },
+                      controller: imagemController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Imagem',
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 100,
+                    width: 72,
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(width: 2),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        imagemController.text,
+                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                          return Image.asset('assets/images/sem_foto.png', fit: BoxFit.cover,);
+                        },
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(onPressed: () {
+                    if(_formKey.currentState!.validate()) {
+                      // print(nomeController.text);
+                      // print(racaController.text);
+                      // print(int.parse(forcaController.text));
+                      // print(imagemController.text);
+                      PersonagemProvider.of(widget.formContext).newPersonagem(nomeController.text, racaController.text, int.parse(forcaController.text), imagemController.text);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Personagem criado com sucesso!')));
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text('Adicionar'),
+                  ),
+                ],
               ),
             ),
           ),
