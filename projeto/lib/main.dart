@@ -1,6 +1,5 @@
-import 'package:alura/data/task_inherited.dart';
-import 'package:alura/screens/form_screen.dart';
-import 'package:alura/screens/initial_screen.dart';
+import 'package:entregar/data/personagem_provider.dart';
+import 'package:entregar/screens/initial_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,12 +12,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'AluraQuest',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: TaskInherited(child: const InitialScreen(),),
+      home: PersonagemProvider(child: const InitialScreen(),),
     );
   }
 }
+
+
 

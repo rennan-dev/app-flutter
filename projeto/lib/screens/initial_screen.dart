@@ -1,10 +1,10 @@
-import 'package:alura/components/task.dart';
-import 'package:alura/data/task_inherited.dart';
-import 'package:alura/screens/form_screen.dart';
+
+
+import 'package:entregar/data/personagem_provider.dart';
+import 'package:entregar/screens/form_screen.dart';
 import 'package:flutter/material.dart';
 
 class InitialScreen extends StatefulWidget {
-
   const InitialScreen({super.key});
 
   @override
@@ -15,24 +15,20 @@ class _InitialScreenState extends State<InitialScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: Container(),
-          title: const Text('Nanatsu no Taizai', style: TextStyle(color: Colors.white),),
-          backgroundColor: Colors.blue, // Cor da sua escolha
-        ),
-        body: ListView(
-          children: TaskInherited.of(context).taskList,
-          padding: EdgeInsets.only(top: 8, bottom: 70),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.lightBlue,
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (contextNew) => FormScreen(taskContext: context,)));
-          },
-          child: const Icon(Icons.add),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Lista de Personagens'),
+        backgroundColor: Colors.lightGreen,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.only(top: 8, bottom: 70),
+        children: PersonagemProvider.of(context).personagemList,
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (contextNew) => FormScreen(formContext: context,)));
+      },
+        backgroundColor: const Color(0xFF05A52F),
+        child: const Icon(Icons.add, color: Colors.white,),
       ),
     );
   }
