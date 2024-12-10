@@ -1,3 +1,3 @@
 # app-flutter
 
-## App feito no curso da Alura
+## App feito para ser entregue na semana 23 da alura
