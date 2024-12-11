@@ -12,6 +12,15 @@ class Personagem extends StatefulWidget {
 
   int life = 10;
 
+  Map<String, dynamic> toMap() {
+    return {
+      "nome": nome,
+      "forca": forca,
+      "raca": raca,
+      "image": image
+    };
+  }
+
   @override
   State<Personagem> createState() => _PersonagemState();
 }

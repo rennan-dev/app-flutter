@@ -73,20 +73,30 @@ class _InitialScreenState extends State<InitialScreen> {
             }
         },),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.push(
-            context, MaterialPageRoute(
-            builder: (contextNew) => FormScreen(formContext: context,),),
-        ).then((value) {
-          if (value == true) {
-            setState(() {
-            });
-          }
-        });
-      },
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (contextNew) => FormScreen(formContext: context),
+            ),
+          ).then((value) {
+            if (value != null && value is String && value.isNotEmpty) {
+              // Exibir Snackbar com a mensagem retornada
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(value),
+                  backgroundColor: value.contains('sucesso') ? Colors.green : Colors.red,
+                ),
+              );
+            }
+            setState(() {}); // Atualiza a lista de personagens
+          });
+        },
         backgroundColor: const Color(0xFF05A52F),
-        child: const Icon(Icons.add, color: Colors.white,),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
+
     );
   }
 }

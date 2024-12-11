@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "email": "rennan@gmail.com",
+      "password": "123123",
+      "id": 1
+    }
+  ],
+  "characters": [
+    {
+      "nome": "Rennan",
+      "forca": 2,
+      "raca": "Humano",
+      "image": "essaaimesmo",
+      "id": 1
+    }
+  ]
+}
