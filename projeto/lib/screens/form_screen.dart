@@ -1,5 +1,4 @@
 import 'package:entregar/components/personagem.dart';
-import 'package:entregar/data/personagem_dao.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 
@@ -184,22 +183,26 @@ class _FormScreenState extends State<FormScreen> {
       ),
     );
   }
-  registerCharacter(BuildContext context) async {
+  void registerCharacter(BuildContext context) {
     CharacterService service = CharacterService();
-    bool result = await service.register(
+
+    service.register(
       Personagem(
         nomeController.text,
         int.parse(forcaController.text),
         racaController.text,
         imagemController.text,
       ),
-    );
+    ).then((result) {
+      String message = result
+          ? 'Personagem adicionado com sucesso!'
+          : 'Houve um erro ao adicionar um personagem!';
 
-    String message = result
-        ? 'Personagem adicionado com sucesso!'
-        : 'Houve um erro ao adicionar um personagem!';
-
-    Navigator.pop(context, message); // Retorna a mensagem para a tela anterior
+      Navigator.pop(context, message);
+    }).catchError((error) {
+      Navigator.pop(context, 'Houve um erro inesperado.');
+    });
   }
+
 
 }

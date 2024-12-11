@@ -3,6 +3,7 @@
 import 'package:entregar/components/personagem.dart';
 import 'package:entregar/data/personagem_dao.dart';
 import 'package:entregar/screens/form_screen.dart';
+import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 
 class InitialScreen extends StatefulWidget {
@@ -13,6 +14,25 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
+  CharacterService service = CharacterService();
+  PersonagemDao personagemDao = PersonagemDao();
+
+  Future<List<Personagem>> _getAllCharacters() async {
+    // Obtenha os personagens do banco de dados
+    List<Personagem> personagensBanco = await personagemDao.findAll();
+    // Obtenha os personagens do serviço JSON
+    List<Personagem> personagensJson = await service.getAllCharacters();
+
+    // Combine os dois conjuntos de personagens, evitando duplicatas
+    final nomesBanco = personagensBanco.map((p) => p.nome).toSet();
+    for (var personagem in personagensJson) {
+      if (!nomesBanco.contains(personagem.nome)) {
+        personagensBanco.add(personagem);
+        await personagemDao.save(personagem); // Salve no banco se vier do JSON
+      }
+    }
+    return personagensBanco;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,58 +40,64 @@ class _InitialScreenState extends State<InitialScreen> {
       appBar: AppBar(
         title: const Text('Lista de Personagens'),
         actions: [
-          IconButton(onPressed: (){setState(() {
-
-          });}, icon: const Icon(Icons.refresh)),
+          IconButton(
+            onPressed: () => setState(() {}),
+            icon: const Icon(Icons.refresh),
+          ),
         ],
         backgroundColor: Colors.lightGreen,
       ),
-      body: Padding(padding: const EdgeInsets.only(top: 8, bottom: 70),
-        child: FutureBuilder<List<Personagem>>
-          (future: PersonagemDao().findAll(), builder: (context, snapshot){
-            List<Personagem>? personagens = snapshot.data;
-            switch(snapshot.connectionState) {
-
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 70),
+        child: FutureBuilder<List<Personagem>>(
+          future: _getAllCharacters(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
               case ConnectionState.none:
-                return const Center(child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    Text('Carregando'),
-                  ],
-                ),);
               case ConnectionState.waiting:
-                return const Center(child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    Text('Carregando'),
-                  ],
-                ),);
               case ConnectionState.active:
-                return const Center(child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    Text('Carregando'),
-                  ],
-                ),);
-              case ConnectionState.done:
-                if(snapshot.hasData && personagens!=null) {
-                  if(personagens.isNotEmpty) {
-                    return ListView.builder(itemCount: personagens.length, itemBuilder: (BuildContext context, int index){
-                      final Personagem personagemCard = personagens[index];
-                      return personagemCard;
-                    });
-                  }
-                  return const Center(child: Column(
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error_outline, size: 128,),
-                      Text('Não há nenhum personagem.',
-                      style: TextStyle(fontSize: 24),),
+                      CircularProgressIndicator(),
+                      Text('Carregando...'),
                     ],
-                  ),);
+                  ),
+                );
+              case ConnectionState.done:
+                if (snapshot.hasData && snapshot.data != null) {
+                  final personagens = snapshot.data!;
+                  if (personagens.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: personagens.length,
+                      itemBuilder: (context, index) {
+                        final personagem = personagens[index];
+                        return personagem; // Exibe o card
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error_outline, size: 128),
+                          Text(
+                            'Não há nenhum personagem.',
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                } else {
+                  return const Center(
+                    child: Text('Erro ao carregar personagens.'),
+                  );
                 }
-                return const Text('Erro ao carregar personagens.');
             }
-        },),
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -82,11 +108,12 @@ class _InitialScreenState extends State<InitialScreen> {
             ),
           ).then((value) {
             if (value != null && value is String && value.isNotEmpty) {
-              // Exibir Snackbar com a mensagem retornada
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(value),
-                  backgroundColor: value.contains('sucesso') ? Colors.green : Colors.red,
+                  backgroundColor: value.contains('sucesso')
+                      ? Colors.green
+                      : Colors.red,
                 ),
               );
             }
@@ -96,7 +123,6 @@ class _InitialScreenState extends State<InitialScreen> {
         backgroundColor: const Color(0xFF05A52F),
         child: const Icon(Icons.add, color: Colors.white),
       ),
-
     );
   }
 }

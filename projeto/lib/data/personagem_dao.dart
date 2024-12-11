@@ -17,14 +17,15 @@ class PersonagemDao {
   static const String _forca = 'forca';
   static const String _imagem = 'image';
 
-  save(Personagem personagem) async {
+  Future<void> save(Personagem personagem) async {
     final Database bancoDeDados = await getDatabase();
     var personagensExists = await find(personagem.nome);
     Map<String, dynamic> personagemMap = toMap(personagem);
-    if(personagensExists.isEmpty) {
-      return await bancoDeDados..insert(_tableName, personagemMap);
-    }else {
-      return await bancoDeDados.update(_tableName, personagemMap, where: '$_name = ?', whereArgs: [personagem.nome]);
+
+    if (personagensExists.isEmpty) {
+      await bancoDeDados.insert(_tableName, personagemMap);
+    } else {
+      await bancoDeDados.update(_tableName, personagemMap, where: '$_name = ?', whereArgs: [personagem.nome]);
     }
   }
 

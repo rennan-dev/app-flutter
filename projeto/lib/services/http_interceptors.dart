@@ -14,7 +14,7 @@ class LoggerInterceptor extends InterceptorContract {
       "Requisição para: ${request.url}\n"
           "Método: ${request.method}\n"
           "Cabeçalhos: ${request.headers}\n"
-          "Corpo: ${request is Request ? (request as Request).body : 'Sem corpo'}",
+          "Corpo: ${request is Request ? request.body : 'Sem corpo'}",
     );
     return request;
   }

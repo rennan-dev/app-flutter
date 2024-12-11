@@ -45,7 +45,6 @@ class CharacterService {
       personagens.add(Personagem.fromMap(jMap));
     }
 
-    print(personagens.length);
     return personagens;
   }
 }
