@@ -31,9 +31,21 @@ class CharacterService {
     return false;
   }
 
-  Future<String> getCharacters() async {
+  Future<List<Personagem>> getAllCharacters() async {
     http.Response response = await client.get(Uri.parse(getUrl()));
-    print(response.body);
-    return response.body;
+
+    if(response.statusCode!=200) {
+      throw Exception();
+    }
+
+    List<Personagem> personagens = [];
+    List<dynamic> personagensDynamic = json.decode(response.body);
+    
+    for(var jMap in personagensDynamic) {
+      personagens.add(Personagem.fromMap(jMap));
+    }
+
+    print(personagens.length);
+    return personagens;
   }
 }

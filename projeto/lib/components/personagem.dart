@@ -12,6 +12,13 @@ class Personagem extends StatefulWidget {
 
   int life = 10;
 
+  Personagem.fromMap(Map<String, dynamic> map):
+    nome=map["nome"],
+    forca=map["forca"],
+    raca=map["raca"],
+    image=map["image"];
+
+
   Map<String, dynamic> toMap() {
     return {
       "nome": nome,

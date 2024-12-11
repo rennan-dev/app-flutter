@@ -9,7 +9,7 @@ void main() {
 
   CharacterService service = CharacterService();
   //service.register(Personagem("Rennan", 2, "Humano", "jlsajsdanlsadlsadksakl"));
-  //service.getCharacters();
+  service.getAllCharacters();
 }
 
 class MyApp extends StatelessWidget {
