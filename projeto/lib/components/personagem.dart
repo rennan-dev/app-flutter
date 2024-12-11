@@ -1,5 +1,4 @@
 import 'package:entregar/components/forca_personagem.dart';
-import 'package:entregar/data/personagem_dao.dart';
 import 'package:flutter/material.dart';
 
 class Personagem extends StatefulWidget {
@@ -11,6 +10,22 @@ class Personagem extends StatefulWidget {
   Personagem(this.nome, this.forca, this.raca, this.image, {super.key});
 
   int life = 10;
+
+  Personagem.fromMap(Map<String, dynamic> map):
+    nome=map["nome"],
+    forca=map["forca"],
+    raca=map["raca"],
+    image=map["image"];
+
+
+  Map<String, dynamic> toMap() {
+    return {
+      "nome": nome,
+      "forca": forca,
+      "raca": raca,
+      "image": image
+    };
+  }
 
   @override
   State<Personagem> createState() => _PersonagemState();
@@ -82,7 +97,8 @@ class _PersonagemState extends State<Personagem> {
                         onLongPress: () {
                          setState(() {
                             if(widget.life==0) {
-                              PersonagemDao().delete(widget.nome);
+                              //PersonagemDao().delete(widget.nome);
+                              print('Personagem ${widget.nome} sem vida.');
                             }
                          });
                         },style: ElevatedButton.styleFrom(
