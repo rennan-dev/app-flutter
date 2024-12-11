@@ -1,10 +1,8 @@
-
-
 import 'package:entregar/components/personagem.dart';
-import 'package:entregar/data/personagem_dao.dart';
-import 'package:entregar/screens/form_screen.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
+
+import 'form_screen.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -14,24 +12,10 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
-  CharacterService service = CharacterService();
-  PersonagemDao personagemDao = PersonagemDao();
+  final CharacterService characterService = CharacterService();
 
   Future<List<Personagem>> _getAllCharacters() async {
-    // Obtenha os personagens do banco de dados
-    List<Personagem> personagensBanco = await personagemDao.findAll();
-    // Obtenha os personagens do serviço JSON
-    List<Personagem> personagensJson = await service.getAllCharacters();
-
-    // Combine os dois conjuntos de personagens, evitando duplicatas
-    final nomesBanco = personagensBanco.map((p) => p.nome).toSet();
-    for (var personagem in personagensJson) {
-      if (!nomesBanco.contains(personagem.nome)) {
-        personagensBanco.add(personagem);
-        await personagemDao.save(personagem); // Salve no banco se vier do JSON
-      }
-    }
-    return personagensBanco;
+    return await characterService.getAllCharacters();
   }
 
   @override
@@ -50,7 +34,7 @@ class _InitialScreenState extends State<InitialScreen> {
       body: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 70),
         child: FutureBuilder<List<Personagem>>(
-          future: _getAllCharacters(),
+          future: _getAllCharacters(), // Carregar personagens do banco
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -73,7 +57,12 @@ class _InitialScreenState extends State<InitialScreen> {
                       itemCount: personagens.length,
                       itemBuilder: (context, index) {
                         final personagem = personagens[index];
-                        return personagem; // Exibe o card
+                        return Personagem( // Exibe o card
+                          personagem.nome,
+                          personagem.forca,
+                          personagem.raca,
+                          personagem.image,
+                        );
                       },
                     );
                   } else {

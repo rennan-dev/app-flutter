@@ -8,18 +8,18 @@
   ],
   "characters": [
     {
-      "nome": "Rennan",
-      "forca": 2,
-      "raca": "Humano",
-      "image": "essaaimesmo",
-      "id": 1
-    },
-    {
       "nome": "Escanor",
       "forca": 5,
       "raca": "Humano",
       "image": "https://th.bing.com/th/id/R.37192c572ae3a12ee077e33c11e2faf7?rik=lDKprxVZp6UfgA&pid=ImgRaw&r=0",
       "id": 2
+    },
+    {
+      "nome": "Meliodas",
+      "forca": 5,
+      "raca": "Demonio",
+      "image": "https://th.bing.com/th/id/OIP.WHSmjdH8O0sbx_Vdd08YZgHaKt?rs=1&pid=ImgDetMain",
+      "id": 3
     }
   ]
 }

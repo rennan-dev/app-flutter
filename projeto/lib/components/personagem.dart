@@ -1,5 +1,4 @@
 import 'package:entregar/components/forca_personagem.dart';
-import 'package:entregar/data/personagem_dao.dart';
 import 'package:flutter/material.dart';
 
 class Personagem extends StatefulWidget {
@@ -98,7 +97,8 @@ class _PersonagemState extends State<Personagem> {
                         onLongPress: () {
                          setState(() {
                             if(widget.life==0) {
-                              PersonagemDao().delete(widget.nome);
+                              //PersonagemDao().delete(widget.nome);
+                              print('Personagem ${widget.nome} sem vida.');
                             }
                          });
                         },style: ElevatedButton.styleFrom(
