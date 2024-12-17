@@ -50,6 +50,12 @@ class _InitialScreenState extends State<InitialScreen> {
                   ),
                 );
               case ConnectionState.done:
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Erro ao carregar personagens: ${snapshot.error}'),
+                  );
+                }
+
                 if (snapshot.hasData && snapshot.data != null) {
                   final personagens = snapshot.data!;
                   if (personagens.isNotEmpty) {
@@ -57,11 +63,12 @@ class _InitialScreenState extends State<InitialScreen> {
                       itemCount: personagens.length,
                       itemBuilder: (context, index) {
                         final personagem = personagens[index];
-                        return Personagem( // Exibe o card
+                        return Personagem(
                           personagem.nome,
                           personagem.forca,
                           personagem.raca,
                           personagem.image,
+                          id: personagem.id,
                         );
                       },
                     );
@@ -84,6 +91,7 @@ class _InitialScreenState extends State<InitialScreen> {
                     child: Text('Erro ao carregar personagens.'),
                   );
                 }
+
             }
           },
         ),
