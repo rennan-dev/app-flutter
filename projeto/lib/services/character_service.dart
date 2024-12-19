@@ -8,7 +8,7 @@ import 'package:http_interceptor/http/intercepted_client.dart';
 import 'http_interceptors.dart';
 
 class CharacterService {
-  static const String url = "http://192.168.80.106:3000/";
+  static const String url = "http://10.90.51.19:3000/";
   static const String resource = "characters/";
 
   http.Client client = InterceptedClient.build(interceptors: [LoggerInterceptor()]);
@@ -27,6 +27,21 @@ class CharacterService {
       body: jsonPersonagem,
     );
     if(response.statusCode==201) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> edit(String id, Personagem personagem) async {
+    String jsonPersonagem = json.encode(personagem.toMap());
+    http.Response response = await client.put(
+      Uri.parse("${getUrl()}$id"),
+      headers: {
+        'Content-type': "application/json",
+      },
+      body: jsonPersonagem,
+    );
+    if(response.statusCode==200) {
       return true;
     }
     return false;

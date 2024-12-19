@@ -63,15 +63,42 @@ class _InitialScreenState extends State<InitialScreen> {
                       itemCount: personagens.length,
                       itemBuilder: (context, index) {
                         final personagem = personagens[index];
-                        return Personagem(
-                          personagem.nome,
-                          personagem.forca,
-                          personagem.raca,
-                          personagem.image,
-                          id: personagem.id,
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FormScreen(
+                                  formContext: context,
+                                  personagem: personagem,
+                                  isEditing: true,
+                                ),
+                              ),
+                            ).then((value) {
+                              if (value != null && value is String && value.isNotEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(value),
+                                    backgroundColor: value.contains('sucesso')
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                );
+                              }
+                              setState(() {}); // Atualiza a lista de personagens
+                            });
+                          },
+                          child: Personagem(
+                            personagem.nome,
+                            personagem.forca,
+                            personagem.raca,
+                            personagem.image,
+                            id: personagem.id,
+                          ),
                         );
                       },
                     );
+
                   } else {
                     return const Center(
                       child: Column(
@@ -101,7 +128,7 @@ class _InitialScreenState extends State<InitialScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (contextNew) => FormScreen(formContext: context),
+              builder: (contextNew) => FormScreen(formContext: context, isEditing: false,),
             ),
           ).then((value) {
             if (value != null && value is String && value.isNotEmpty) {

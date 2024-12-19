@@ -20,7 +20,7 @@ class Personagem extends StatefulWidget {
   int life = 10;
 
   Personagem.fromMap(Map<String, dynamic> map)
-      : id = map["id"] != null ? map["id"].toString() : null, // Conversão para String
+      : id = map["id"] != null ? map["id"].toString() : null,
         nome = map["nome"],
         forca = map["forca"],
         raca = map["raca"],
@@ -170,9 +170,8 @@ class _PersonagemState extends State<Personagem> {
       if (confirmar != null && confirmar) {
         personagemService.delete(personagemId).then((success) {
           if (success) {
-            setState(() {});
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Personagem removido com sucesso")),
+              const SnackBar(content: Text("Personagem removido com sucesso, atualize a tela.")),
             );
           }
         }).catchError((error) {

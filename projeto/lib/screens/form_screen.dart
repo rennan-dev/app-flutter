@@ -3,9 +3,11 @@ import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 
 class FormScreen extends StatefulWidget {
-  const FormScreen({super.key, required this.formContext});
+  const FormScreen({super.key, required this.formContext, this.personagem, required this.isEditing});
 
   final BuildContext formContext;
+  final Personagem? personagem;
+  final bool isEditing;
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -13,12 +15,38 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
 
-  TextEditingController nomeController = TextEditingController();
-  TextEditingController racaController = TextEditingController();
-  TextEditingController forcaController = TextEditingController();
-  TextEditingController imagemController = TextEditingController();
+  late TextEditingController nomeController;
+  late TextEditingController racaController;
+  late TextEditingController forcaController;
+  late TextEditingController imagemController;
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    nomeController = TextEditingController(
+      text: widget.personagem?.nome ?? '',
+    );
+    racaController = TextEditingController(
+      text: widget.personagem?.raca ?? '',
+    );
+    forcaController = TextEditingController(
+      text: widget.personagem?.forca?.toString() ?? '',
+    );
+    imagemController = TextEditingController(
+      text: widget.personagem?.image ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    racaController.dispose();
+    forcaController.dispose();
+    imagemController.dispose();
+    super.dispose();
+  }
 
   bool valueValidate(String? value) {
     if(value!=null && value.isEmpty) {
@@ -42,7 +70,11 @@ class _FormScreenState extends State<FormScreen> {
       key: _formKey,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Adicionar Personagem'),
+          title: Text(
+            widget.personagem == null
+                ? 'Adicionar Personagem'
+                : 'Editar Personagem',
+          ),
           backgroundColor: Colors.lightGreen,
         ),
         body: Center(
@@ -168,9 +200,11 @@ class _FormScreenState extends State<FormScreen> {
                       // PersonagemDao().save(Personagem(nomeController.text, int.parse(forcaController.text), racaController.text, imagemController.text));
                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Personagem criado com sucesso!')));
                       // Navigator.pop(context, true);
-
-                      //fazer a lógica para mandar para a api fake:
-                      registerCharacter(context);
+                      if(widget.isEditing) {
+                        editChatacter(context);
+                      }else {
+                        registerCharacter(context);
+                      }
                     }
                   },
                   child: const Text('Adicionar'),
@@ -204,5 +238,20 @@ class _FormScreenState extends State<FormScreen> {
     });
   }
 
+  void editChatacter(BuildContext context) {
+    CharacterService service = CharacterService();
 
+    service.edit(
+      (widget.personagem?.id).toString(),
+      Personagem(nomeController.text, int.parse(forcaController.text), racaController.text, imagemController.text),
+    ).then((result) {
+      String message = result
+          ? 'Personagem editado com sucesso!'
+          : 'Houve um erro ao editar o personagem!';
+
+      Navigator.pop(context, message);
+    }).catchError((error) {
+      Navigator.pop(context, 'Houve um erro inesperado.');
+    });
+  }
 }
