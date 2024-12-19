@@ -1,8 +1,8 @@
-import 'package:entregar/components/personagem.dart';
+import 'package:entregar/screens/initial_screen/widgets/personagem.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 
-import 'form_screen.dart';
+import '../form_screen/form_screen.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -34,7 +34,7 @@ class _InitialScreenState extends State<InitialScreen> {
       body: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 70),
         child: FutureBuilder<List<Personagem>>(
-          future: _getAllCharacters(), // Carregar personagens do banco
+          future: _getAllCharacters(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -94,10 +94,12 @@ class _InitialScreenState extends State<InitialScreen> {
                             personagem.raca,
                             personagem.image,
                             id: personagem.id,
+                            onRefresh: () => setState(() {}), // Atualiza ao remover personagem
                           ),
                         );
                       },
                     );
+
 
                   } else {
                     return const Center(
@@ -118,7 +120,6 @@ class _InitialScreenState extends State<InitialScreen> {
                     child: Text('Erro ao carregar personagens.'),
                   );
                 }
-
             }
           },
         ),

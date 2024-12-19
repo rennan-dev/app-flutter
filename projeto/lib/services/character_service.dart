@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:entregar/components/personagem.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http/intercepted_client.dart';
-
+import '../screens/initial_screen/widgets/personagem.dart';
 import 'http_interceptors.dart';
 
 class CharacterService {

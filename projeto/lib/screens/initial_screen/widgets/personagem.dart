@@ -1,32 +1,37 @@
 import 'dart:io';
 
-import 'package:entregar/components/forca_personagem.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/commom/confirmation_dialog.dart';
-import '../screens/commom/exception_dialog.dart';
+import '../../commom/confirmation_dialog.dart';
+import '../../commom/exception_dialog.dart';
+import 'forca_personagem.dart';
 
 class Personagem extends StatefulWidget {
-  final String? id; // id agora pode ser nulo
+  final String? id;
   final String nome;
   final int forca;
   final String raca;
   final String image;
+  final VoidCallback? onRefresh; // Torne onRefresh opcional
 
-  Personagem(this.nome, this.forca, this.raca, this.image, {this.id, super.key});
-
+  // Construtor padrão com onRefresh opcional
+  Personagem(this.nome, this.forca, this.raca, this.image, {this.id, this.onRefresh, super.key});
 
   int life = 10;
 
-  Personagem.fromMap(Map<String, dynamic> map)
+  // Construtor de fábrica com onRefresh opcional (valores default)
+  Personagem.fromMap(Map<String, dynamic> map, [this.onRefresh])
       : id = map["id"] != null ? map["id"].toString() : null,
         nome = map["nome"],
         forca = map["forca"],
         raca = map["raca"],
         image = map["image"];
 
-
+  // Função padrão para onRefresh, se não for passada
+  static void _defaultOnRefresh() {
+    // Função vazia ou qualquer comportamento padrão
+  }
 
   Map<String, dynamic> toMap() {
     final map = {
@@ -41,7 +46,6 @@ class Personagem extends StatefulWidget {
     }
     return map;
   }
-
 
   @override
   State<Personagem> createState() => _PersonagemState();
@@ -63,7 +67,7 @@ class _PersonagemState extends State<Personagem> {
       child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.lightGreen,), height: 140,),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.lightGreen,), height: 140, ),
           Column(
             children: [
               Container(
@@ -74,9 +78,9 @@ class _PersonagemState extends State<Personagem> {
                   Container(
                     decoration: BoxDecoration(color: Colors.black26, borderRadius: BorderRadius.circular(4)), width: 72, height: 100,
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: assetOrNetwork() ? Image.asset(widget.image, fit: BoxFit.cover) : Image.network(widget.image, fit: BoxFit.cover),
-                        ),
+                      borderRadius: BorderRadius.circular(4),
+                      child: assetOrNetwork() ? Image.asset(widget.image, fit: BoxFit.cover) : Image.network(widget.image, fit: BoxFit.cover),
+                    ),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -92,11 +96,11 @@ class _PersonagemState extends State<Personagem> {
                     ],
                   ),
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(onPressed: (){
+                        ElevatedButton(onPressed: () {
                           setState(() {
-                            widget.life<10?widget.life++:widget.life;
+                            widget.life < 10 ? widget.life++ : widget.life;
                           });
                         }, style: ElevatedButton.styleFrom(
                           minimumSize: const Size(40, 40),
@@ -105,25 +109,24 @@ class _PersonagemState extends State<Personagem> {
                         ),
                           child: const Icon(Icons.arrow_drop_up_outlined, color: Colors.white),
                         ),
-                        ElevatedButton(onPressed: (){
+                        ElevatedButton(onPressed: () {
                           setState(() {
-                            widget.life>0?widget.life--:widget.life;
+                            widget.life > 0 ? widget.life-- : widget.life;
                           });
                         },
-                        onLongPress: () {
-                         setState(() {
-                            if(widget.life==0) {
-                              //PersonagemDao().delete(widget.nome);
-                              print('Personagem ${widget.nome} sem vida.');
-                              removePersonagem(context, widget.id);
-
-                            }
-                         });
-                        },style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(40, 40),
-                          backgroundColor: Colors.green,
-                          shape: const CircleBorder(),
-                        ),
+                          onLongPress: () {
+                            setState(() {
+                              if (widget.life == 0) {
+                                //PersonagemDao().delete(widget.nome);
+                                print('Personagem ${widget.nome} sem vida.');
+                                removePersonagem(context, widget.id);
+                              }
+                            });
+                          }, style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(40, 40),
+                            backgroundColor: Colors.green,
+                            shape: const CircleBorder(),
+                          ),
                           child: const Icon(Icons.arrow_drop_down_outlined, color: Colors.white),
                         ),
                       ]
@@ -134,15 +137,14 @@ class _PersonagemState extends State<Personagem> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: SizedBox(width: 200, child: LinearProgressIndicator(
-                      color: Colors.green,
-                      value: widget.life/10,
-                    )),
-                  ),
+                      padding: const EdgeInsets.all(8),
+                      child: SizedBox(width: 200, child: LinearProgressIndicator(
+                        color: Colors.green,
+                        value: widget.life / 10,
+                      ))),
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Text('Vida ${widget.life*10}', style: const TextStyle(color: Colors.white, fontSize: 16),),
+                    child: Text('Vida ${widget.life * 10}', style: const TextStyle(color: Colors.white, fontSize: 16),),
                   ),
                 ],
               ),
@@ -171,8 +173,11 @@ class _PersonagemState extends State<Personagem> {
         personagemService.delete(personagemId).then((success) {
           if (success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Personagem removido com sucesso, atualize a tela.")),
+              const SnackBar(content: Text("Personagem removido com sucesso.")),
             );
+            if (widget.onRefresh != null) {
+              widget.onRefresh!(); // Só chama se onRefresh não for nulo
+            }
           }
         }).catchError((error) {
           var innerError = error is HttpException ? error : null;
@@ -187,8 +192,4 @@ class _PersonagemState extends State<Personagem> {
       }
     });
   }
-
-
-
-
 }
