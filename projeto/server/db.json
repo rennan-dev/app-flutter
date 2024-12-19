@@ -2,7 +2,7 @@
   "users": [
     {
       "email": "rennan@gmail.com",
-      "password": "123123",
+      "password": "$2a$10$smN5859k27Pp69y1mdEm1eGZ3H/s54FvXfdQAIqEYnbbVHhYJxpHq",
       "id": 1
     }
   ],
@@ -20,13 +20,6 @@
       "raca": "Demonio",
       "image": "https://zonacritica.com.br/wp-content/uploads/2022/06/Meliodas.jpg",
       "id": 3
-    },
-    {
-      "nome": "King",
-      "forca": 4,
-      "raca": "Fada",
-      "image": "https://th.bing.com/th/id/OIP.hCTQoQtjac63z0Qb6V-zmgHaHa?rs=1&pid=ImgDetMain",
-      "id": 4
     },
     {
       "nome": "Merlin",

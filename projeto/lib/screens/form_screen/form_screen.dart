@@ -1,6 +1,7 @@
-import 'package:entregar/components/personagem.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
+
+import '../initial_screen/widgets/personagem.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key, required this.formContext, this.personagem, required this.isEditing});

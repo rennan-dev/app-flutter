@@ -1,5 +1,6 @@
-import 'package:entregar/components/personagem.dart';
 import 'package:flutter/material.dart';
+
+import '../screens/initial_screen/widgets/personagem.dart';
 
 class PersonagemProvider extends InheritedWidget {
   PersonagemProvider({

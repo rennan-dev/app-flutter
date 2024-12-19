@@ -1,5 +1,5 @@
 import 'package:entregar/data/personagem_provider.dart';
-import 'package:entregar/screens/initial_screen.dart';
+import 'package:entregar/screens/login_screen/login_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: PersonagemProvider(child: const InitialScreen()),
+      home: PersonagemProvider(child: LoginScreen()),
     );
   }
 }
