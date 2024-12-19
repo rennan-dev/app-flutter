@@ -8,7 +8,7 @@
   ],
   "characters": [
     {
-      "nome": "Escanor",
+      "nome": "Escanor - O mais forte",
       "forca": 5,
       "raca": "Humano",
       "image": "https://th.bing.com/th/id/R.37192c572ae3a12ee077e33c11e2faf7?rik=lDKprxVZp6UfgA&pid=ImgRaw&r=0",
@@ -20,6 +20,27 @@
       "raca": "Demonio",
       "image": "https://zonacritica.com.br/wp-content/uploads/2022/06/Meliodas.jpg",
       "id": 3
+    },
+    {
+      "nome": "King",
+      "forca": 4,
+      "raca": "Fada",
+      "image": "https://th.bing.com/th/id/OIP.hCTQoQtjac63z0Qb6V-zmgHaHa?rs=1&pid=ImgDetMain",
+      "id": 4
+    },
+    {
+      "nome": "Merlin",
+      "forca": 4,
+      "raca": "Humana",
+      "image": "https://th.bing.com/th/id/R.30b4f064e9f0b0c4ef2b8c9e1a8d7bec?rik=e8iWXBp79qKXgg&pid=ImgRaw&r=0",
+      "id": 5
+    },
+    {
+      "nome": "Gowther",
+      "forca": 4,
+      "raca": "Marionete",
+      "image": "https://img.quizur.com/f/img61dc5d83b18ac0.91176254.jpg?lastEdited=1641831828",
+      "id": 6
     }
   ]
 }
