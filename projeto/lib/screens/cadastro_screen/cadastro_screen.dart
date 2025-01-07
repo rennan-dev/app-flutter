@@ -107,7 +107,9 @@ class CadastroScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.white),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
                         child: const Text(
                           "Log in",
                           style: TextStyle(
