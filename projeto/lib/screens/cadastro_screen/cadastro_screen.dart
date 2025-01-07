@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const CadastroScreen());
-}
-
 class CadastroScreen extends StatelessWidget {
   const CadastroScreen({super.key});
 

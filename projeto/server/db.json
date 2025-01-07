@@ -4,6 +4,11 @@
       "email": "rennan@gmail.com",
       "password": "$2a$10$smN5859k27Pp69y1mdEm1eGZ3H/s54FvXfdQAIqEYnbbVHhYJxpHq",
       "id": 1
+    },
+    {
+      "email": "joao@gmail.com",
+      "password": "$2a$10$kS/PiRs/YOFOMH5AOSS.qu6vPsOavcv2xfSi79WLV2FvWm5nnpHwa",
+      "id": 2
     }
   ],
   "characters": [

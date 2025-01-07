@@ -1,3 +1,5 @@
+import 'package:entregar/screens/commom/exception_dialog.dart';
+import 'package:entregar/screens/initial_screen/initial_screen.dart';
 import 'package:entregar/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -89,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        login();
+                        login(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
@@ -134,10 +136,18 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  login() {
+  login(BuildContext context) async {
     String email = emailController.text;
     String password = passwordController.text;
 
-    authService.login(email: email, password: password);
+    try {
+      authService.login(email: email, password: password).then((resultLogin) {
+        if(resultLogin) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const InitialScreen()));
+        }
+      });
+    }on UserNotFindException {
+      showExceptionDialog(context, content: "Usuário não encontrado.");
+    }
   }
 }
