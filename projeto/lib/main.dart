@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: (isLogged)? '/initial' : '/login',
+      //initialRoute: (isLogged)? '/initial' : '/login',
+      initialRoute: '/login',
       routes: {
         '/login': (context) => PersonagemProvider(child: LoginScreen()),
         '/initial': (context) => const InitialScreen(),

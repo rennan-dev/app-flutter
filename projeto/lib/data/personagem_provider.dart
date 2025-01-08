@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/initial_screen/widgets/personagem.dart';
 
@@ -10,8 +11,10 @@ class PersonagemProvider extends InheritedWidget {
 
   final List<Personagem> personagemList = [];
 
-  void newPersonagem(String nome, String raca, int forca, String urlImage) {
-    personagemList.add(Personagem(nome, forca, raca, urlImage));
+  void newPersonagem(String nome, String raca, int forca, String urlImage) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt("id");
+    personagemList.add(Personagem(nome, forca, raca, urlImage, userId!));
   }
 
   static PersonagemProvider of(BuildContext context) {

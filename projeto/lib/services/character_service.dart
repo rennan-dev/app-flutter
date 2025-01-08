@@ -46,9 +46,14 @@ class CharacterService {
     return false;
   }
 
-  Future<List<Personagem>> getAllCharacters() async {
+  Future<List<Personagem>> getAllCharacters({required String id, required String token}) async {
     try {
-      http.Response response = await client.get(Uri.parse(getUrl()));
+      http.Response response = await client.get(Uri.parse
+        ("${url}users/$id/characters"),
+        headers: {
+          "Authorization" : "Bearer $token"
+        }
+      );
 
       if (response.statusCode != 200) {
         throw HttpException(

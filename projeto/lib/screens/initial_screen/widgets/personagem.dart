@@ -13,10 +13,11 @@ class Personagem extends StatefulWidget {
   final int forca;
   final String raca;
   final String image;
-  final VoidCallback? onRefresh; // Torne onRefresh opcional
+  final VoidCallback? onRefresh;
+  final int userId;
 
   // Construtor padrão com onRefresh opcional
-  Personagem(this.nome, this.forca, this.raca, this.image, {this.id, this.onRefresh, super.key});
+  Personagem(this.nome, this.forca, this.raca, this.image, this.userId, {this.id, this.onRefresh, super.key});
 
   int life = 10;
 
@@ -26,11 +27,12 @@ class Personagem extends StatefulWidget {
         nome = map["nome"],
         forca = map["forca"],
         raca = map["raca"],
-        image = map["image"];
+        image = map["image"],
+        userId = map["userId"];
 
-  // Função padrão para onRefresh, se não for passada
+  //função padrão para onRefresh, se não for passada
   static void _defaultOnRefresh() {
-    // Função vazia ou qualquer comportamento padrão
+    //função vazia ou qualquer comportamento padrão
   }
 
   Map<String, dynamic> toMap() {
@@ -38,7 +40,8 @@ class Personagem extends StatefulWidget {
       "nome": nome,
       "forca": forca,
       "raca": raca,
-      "image": image
+      "image": image,
+      "userId": userId
     };
 
     if (id != null) {

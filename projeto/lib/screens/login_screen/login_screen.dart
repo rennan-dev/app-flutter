@@ -111,7 +111,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/signup'); // Rota para cadastro
+                        Navigator.pushReplacementNamed(context, '/signup'); // Rota para cadastro
                       },
                       child: const Text(
                         "Create new",

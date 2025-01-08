@@ -108,7 +108,7 @@ class CadastroScreen extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/login');
+                          Navigator.pushReplacementNamed(context, '/login');
                         },
                         child: const Text(
                           "Log in",

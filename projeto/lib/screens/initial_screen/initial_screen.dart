@@ -1,6 +1,7 @@
 import 'package:entregar/screens/initial_screen/widgets/personagem.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../form_screen/form_screen.dart';
 
@@ -15,8 +16,22 @@ class _InitialScreenState extends State<InitialScreen> {
   final CharacterService characterService = CharacterService();
 
   Future<List<Personagem>> _getAllCharacters() async {
-    return await characterService.getAllCharacters();
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("accessToken");
+    final email = prefs.getString("email");
+    final id = prefs.getInt("id");
+
+    if (token != null && email != null && id != null) {
+      return await characterService.getAllCharacters(
+        id: id.toString(),
+        token: token,
+      );
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+      return [];
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
