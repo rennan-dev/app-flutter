@@ -16,12 +16,12 @@ class CharacterService {
     return "$url$resource";
   }
 
-  Future<bool> register(Personagem personagem) async {
+  Future<bool> register(Personagem personagem, String token) async {
     String jsonPersonagem = json.encode(personagem.toMap());
     http.Response response = await client.post(
       Uri.parse(getUrl()),
       headers: {
-        'Content-type': "application/json",
+        'Content-type': "application/json", "Authorization" : "Bearer $token",
       },
       body: jsonPersonagem,
     );
@@ -31,12 +31,12 @@ class CharacterService {
     return false;
   }
 
-  Future<bool> edit(String id, Personagem personagem) async {
+  Future<bool> edit(String id, Personagem personagem, String token) async {
     String jsonPersonagem = json.encode(personagem.toMap());
     http.Response response = await client.put(
       Uri.parse("${getUrl()}$id"),
       headers: {
-        'Content-type': "application/json",
+        'Content-type': "application/json", "Authorization" : "Bearer $token",
       },
       body: jsonPersonagem,
     );
@@ -69,14 +69,18 @@ class CharacterService {
   }
 
 
-  Future<bool> delete(String id) async {
+  Future<bool> delete(String id, String token) async {
     final url = Uri.parse("${getUrl()}$id");
-    final http.Response response = await http.delete(url);
+    final http.Response response = await http.delete(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+      },
+    );
 
     if (response.statusCode != 200) {
       throw HttpException("Erro ao excluir personagem: ${response.body}");
     }
     return true;
   }
-
 }

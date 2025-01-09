@@ -13,6 +13,7 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
+
   final CharacterService characterService = CharacterService();
 
   Future<List<Personagem>> _getAllCharacters() async {
@@ -87,6 +88,7 @@ class _InitialScreenState extends State<InitialScreen> {
                                   formContext: context,
                                   personagem: personagem,
                                   isEditing: true,
+                                  userId: personagem.userId,
                                 ),
                               ),
                             ).then((value) {
@@ -108,6 +110,7 @@ class _InitialScreenState extends State<InitialScreen> {
                             personagem.forca,
                             personagem.raca,
                             personagem.image,
+                            personagem.userId,
                             id: personagem.id,
                             onRefresh: () => setState(() {}), // Atualiza ao remover personagem
                           ),
@@ -141,28 +144,39 @@ class _InitialScreenState extends State<InitialScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (contextNew) => FormScreen(formContext: context, isEditing: false,),
-            ),
-          ).then((value) {
-            if (value != null && value is String && value.isNotEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(value),
-                  backgroundColor: value.contains('sucesso')
-                      ? Colors.green
-                      : Colors.red,
+          returnUserId().then((userId) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (contextNew) => FormScreen(
+                  formContext: context,
+                  isEditing: false,
+                  userId: userId, // Agora o valor está disponível
                 ),
-              );
-            }
-            setState(() {}); // Atualiza a lista de personagens
+              ),
+            ).then((value) {
+              if (value != null && value is String && value.isNotEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(value),
+                    backgroundColor: value.contains('sucesso') ? Colors.green : Colors.red,
+                  ),
+                );
+              }
+              setState(() {}); // Atualiza a lista de personagens
+            });
           });
         },
         backgroundColor: const Color(0xFF05A52F),
         child: const Icon(Icons.add, color: Colors.white),
       ),
+
     );
   }
+}
+
+Future<int> returnUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  final id = prefs.getInt("id");
+  return id ?? -1;
 }
