@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:entregar/screens/commom/exception_dialog.dart';
 import 'package:entregar/screens/initial_screen/widgets/personagem.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/logout.dart';
 import '../form_screen/form_screen.dart';
 
 class InitialScreen extends StatefulWidget {
@@ -49,7 +53,7 @@ class _InitialScreenState extends State<InitialScreen> {
       ),
       drawer: Drawer(
         child: ListView(children: [
-          ListTile(onTap: () { logout(); }, title: const Text("Sair"), leading: const Icon(Icons.logout),),
+          ListTile(onTap: () { logout(context); }, title: const Text("Sair"), leading: const Icon(Icons.logout),),
         ],),
       ),
       body: Padding(
@@ -108,7 +112,18 @@ class _InitialScreenState extends State<InitialScreen> {
                                 );
                               }
                               setState(() {}); // Atualiza a lista de personagens
-                            });
+                            }).catchError(
+                                (error) {
+                                  logout(context);
+                                },
+                                test: (error) => error is TokenNotValidException,
+                            ).catchError(
+                                (error) {
+                                  var innerError = error as HttpException;
+                                  showExceptionDialog(context, content: innerError.message);
+                                },
+                                test: (error) => error is HttpException
+                            );
                           },
                           child: Personagem(
                             personagem.nome,
@@ -156,7 +171,7 @@ class _InitialScreenState extends State<InitialScreen> {
                 builder: (contextNew) => FormScreen(
                   formContext: context,
                   isEditing: false,
-                  userId: userId, // Agora o valor está disponível
+                  userId: userId,
                 ),
               ),
             ).then((value) {
@@ -177,13 +192,6 @@ class _InitialScreenState extends State<InitialScreen> {
       ),
 
     );
-  }
-
-  logout() {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.clear();
-      Navigator.pushReplacementNamed(context, '/login');
-    });
   }
 }
 

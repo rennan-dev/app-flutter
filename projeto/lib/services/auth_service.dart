@@ -1,17 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:entregar/services/webclient.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'http_interceptors.dart';
-
 class AuthService {
-  //TODO: modularizar o end point
-  static const String url = "http://10.90.51.19:3000/";
 
-  http.Client client = InterceptedClient.build(interceptors: [LoggerInterceptor()]);
+  String url = Webclient.url;
+  http.Client client = Webclient().client;
 
   Future<bool> login({required String email, required String password}) async {
     http.Response response = await client.post(
@@ -36,19 +33,42 @@ class AuthService {
 
   Future<bool> register({required String email, required String password}) async {
     http.Response response = await client.post(
-        Uri.parse('${url}register'),
-        body: {
-          'email' : email,
-          'password' : password
-        }
+      Uri.parse('${url}register'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
     );
 
-    if(response.statusCode!=201) {
+    if (response.statusCode != 201) {
       throw HttpException(response.body);
     }
 
     saveUserInfos(response.body);
     return true;
+  }
+
+  Future<bool> checkUserExists({required String email}) async {
+    final requestUrl = Uri.parse("${url}users?email=$email");
+    final response = await client.get(requestUrl);
+
+    if (response.statusCode == 200) {
+      try {
+        final data = jsonDecode(response.body);
+
+        if (data is List && data.isNotEmpty) {
+          return true;
+        }
+        return false;
+      } catch (e) {
+        throw HttpException("Erro ao processar a resposta: $e");
+      }
+    } else {
+      throw HttpException("Erro ao verificar usuário: ${response.body}");
+    }
   }
 
   saveUserInfos(String body) async {
@@ -62,11 +82,6 @@ class AuthService {
     prefs.setString("accessToken", token);
     prefs.setString("email", email);
     prefs.setInt("id", id);
-
-    String? tokenInfo = prefs.getString("accessToken");
-    String? emailInfo = prefs.getString("email");
-
-    print("Token com persistência: $tokenInfo\nEmail com persistência: $emailInfo");
   }
 }
 

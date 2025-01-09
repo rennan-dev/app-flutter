@@ -1,12 +1,15 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:entregar/screens/commom/exception_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:entregar/services/auth_service.dart';
 
 class LoginScreen extends StatelessWidget {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  AuthService authService = AuthService();
+  final AuthService authService = AuthService();
 
   LoginScreen({super.key});
   @override
@@ -135,14 +138,27 @@ class LoginScreen extends StatelessWidget {
     String email = emailController.text;
     String password = passwordController.text;
 
-    try {
-      authService.login(email: email, password: password).then((resultLogin) {
-        if (resultLogin) {
-          Navigator.pushReplacementNamed(context, '/initial');
-        }
-      });
-    } on UserNotFindException {
-      showExceptionDialog(context, content: "Usuário não encontrado.");
+    authService.login(email: email, password: password).then((resultLogin) {
+      if (resultLogin) {
+        Navigator.pushReplacementNamed(context, '/initial');
+      }
     }
+    ).catchError(
+      (error) {
+        var innerError = error as HttpException;
+        showExceptionDialog(context, content: innerError.message);
+      },
+      test: (error) => error is HttpException
+    ).catchError(
+      (error) {
+        showExceptionDialog(context, content: "Usuário não encontrado.");
+      },
+      test: (error) => error is UserNotFindException
+    ).catchError(
+      (error) {
+        showExceptionDialog(context, content: "O servidor demorou pra responder, tente novamente mais tarde.");
+      },
+      test: (error) => error is TimeoutException
+    );
   }
 }

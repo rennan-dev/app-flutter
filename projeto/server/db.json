@@ -13,12 +13,12 @@
   ],
   "characters": [
     {
-      "nome": "Escanor - O mais forte",
+      "nome": "Escanor",
       "forca": 5,
       "raca": "Humano",
       "image": "https://th.bing.com/th/id/R.37192c572ae3a12ee077e33c11e2faf7?rik=lDKprxVZp6UfgA&pid=ImgRaw&r=0",
-      "id": 2,
-      "userId": 1
+      "userId": 1,
+      "id": 2
     },
     {
       "nome": "Meliodas",
@@ -43,14 +43,6 @@
       "image": "https://criticalhits.com.br/wp-content/uploads/2020/09/Nanatsu-no-Taizai-King-no-Manga-Michi-King.jpg",
       "userId": 1,
       "id": 7
-    },
-    {
-      "nome": "Gowther",
-      "forca": 4,
-      "raca": "Marionete",
-      "image": "https://img.quizur.com/f/img61dc5d83b18ac0.91176254.jpg?lastEdited=1641831828",
-      "userId": 1,
-      "id": 8
     },
     {
       "nome": "Ban",

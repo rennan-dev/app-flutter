@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/logout.dart';
+import '../commom/exception_dialog.dart';
 import '../initial_screen/widgets/personagem.dart';
 
 class FormScreen extends StatefulWidget {
@@ -35,7 +39,7 @@ class _FormScreenState extends State<FormScreen> {
       text: widget.personagem?.raca ?? '',
     );
     forcaController = TextEditingController(
-      text: widget.personagem?.forca?.toString() ?? '',
+      text: widget.personagem?.forca.toString() ?? '',
     );
     imagemController = TextEditingController(
       text: widget.personagem?.image ?? '',
@@ -240,9 +244,18 @@ class _FormScreenState extends State<FormScreen> {
               : 'Houve um erro ao adicionar um personagem!';
 
           Navigator.pop(context, message);
-        }).catchError((error) {
-          Navigator.pop(context, 'Houve um erro inesperado.');
-        });
+        }).catchError(
+              (error) {
+            logout(context);
+          },
+          test: (error) => error is TokenNotValidException,
+        ).catchError(
+                (error) {
+              var innerError = error as HttpException;
+              showExceptionDialog(context, content: innerError.message);
+            },
+            test: (error) => error is HttpException
+        );
       }
     });
   }
@@ -262,9 +275,18 @@ class _FormScreenState extends State<FormScreen> {
               : 'Houve um erro ao editar o personagem!';
 
           Navigator.pop(context, message);
-        }).catchError((error) {
-          Navigator.pop(context, 'Houve um erro inesperado.');
-        });
+        }).catchError(
+              (error) {
+            logout(context);
+          },
+          test: (error) => error is TokenNotValidException,
+        ).catchError(
+                (error) {
+              var innerError = error as HttpException;
+              showExceptionDialog(context, content: innerError.message);
+            },
+            test: (error) => error is HttpException
+        );
       }
     });
   }

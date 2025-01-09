@@ -4,6 +4,7 @@ import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../helpers/logout.dart';
 import '../../commom/confirmation_dialog.dart';
 import '../../commom/exception_dialog.dart';
 import 'forca_personagem.dart';
@@ -30,11 +31,6 @@ class Personagem extends StatefulWidget {
         raca = map["raca"],
         image = map["image"],
         userId = map["userId"];
-
-  //função padrão para onRefresh, se não for passada
-  static void _defaultOnRefresh() {
-    //função vazia ou qualquer comportamento padrão
-  }
 
   Map<String, dynamic> toMap() {
     final map = {
@@ -121,8 +117,6 @@ class _PersonagemState extends State<Personagem> {
                           onLongPress: () {
                             setState(() {
                               if (widget.life == 0) {
-                                //PersonagemDao().delete(widget.nome);
-                                print('Personagem ${widget.nome} sem vida.');
                                 removePersonagem(context, widget.id);
                               }
                             });
@@ -187,16 +181,18 @@ class _PersonagemState extends State<Personagem> {
                   widget.onRefresh!(); // Só chama se onRefresh não for nulo
                 }
               }
-            }).catchError((error) {
-              var innerError = error is HttpException ? error : null;
-              if (innerError != null) {
-                showExceptionDialog(context, content: innerError.message);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Erro ao tentar remover personagem")),
-                );
-              }
-            });
+            }).catchError(
+                  (error) {
+                logout(context);
+              },
+              test: (error) => error is TokenNotValidException,
+            ).catchError(
+                    (error) {
+                  var innerError = error as HttpException;
+                  showExceptionDialog(context, content: innerError.message);
+                },
+                test: (error) => error is HttpException
+            );
           }
         });
       }
