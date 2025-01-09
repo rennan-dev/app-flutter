@@ -47,6 +47,11 @@ class _InitialScreenState extends State<InitialScreen> {
         ],
         backgroundColor: Colors.lightGreen,
       ),
+      drawer: Drawer(
+        child: ListView(children: [
+          ListTile(onTap: () { logout(); }, title: const Text("Sair"), leading: const Icon(Icons.logout),),
+        ],),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 70),
         child: FutureBuilder<List<Personagem>>(
@@ -172,6 +177,13 @@ class _InitialScreenState extends State<InitialScreen> {
       ),
 
     );
+  }
+
+  logout() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.clear();
+      Navigator.pushReplacementNamed(context, '/login');
+    });
   }
 }
 

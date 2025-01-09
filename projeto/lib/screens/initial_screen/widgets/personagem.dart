@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../commom/confirmation_dialog.dart';
 import '../../commom/exception_dialog.dart';
@@ -159,37 +160,43 @@ class _PersonagemState extends State<Personagem> {
   }
 
   void removePersonagem(BuildContext context, String? personagemId) {
-    if (personagemId == null || personagemId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("ID do personagem inválido")),
-      );
-      return;
-    }
 
-    CharacterService personagemService = CharacterService();
-    showConfirmationDialog(
-      context,
-      content: "Deseja excluir personagem?",
-      affirmativeOption: "Excluir",
-    ).then((confirmar) {
-      if (confirmar != null && confirmar) {
-        personagemService.delete(personagemId).then((success) {
-          if (success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Personagem removido com sucesso.")),
-            );
-            if (widget.onRefresh != null) {
-              widget.onRefresh!(); // Só chama se onRefresh não for nulo
-            }
-          }
-        }).catchError((error) {
-          var innerError = error is HttpException ? error : null;
-          if (innerError != null) {
-            showExceptionDialog(context, content: innerError.message);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Erro ao tentar remover personagem")),
-            );
+    SharedPreferences.getInstance().then((prefs) {
+      String? token = prefs.getString("accessToken");
+      if(token!=null) {
+        if (personagemId == null || personagemId.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("ID do personagem inválido")),
+          );
+          return;
+        }
+
+        CharacterService personagemService = CharacterService();
+        showConfirmationDialog(
+          context,
+          content: "Deseja excluir personagem?",
+          affirmativeOption: "Excluir",
+        ).then((confirmar) {
+          if (confirmar != null && confirmar) {
+            personagemService.delete(personagemId, token).then((success) {
+              if (success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Personagem removido com sucesso.")),
+                );
+                if (widget.onRefresh != null) {
+                  widget.onRefresh!(); // Só chama se onRefresh não for nulo
+                }
+              }
+            }).catchError((error) {
+              var innerError = error is HttpException ? error : null;
+              if (innerError != null) {
+                showExceptionDialog(context, content: innerError.message);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Erro ao tentar remover personagem")),
+                );
+              }
+            });
           }
         });
       }

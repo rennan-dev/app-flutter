@@ -37,14 +37,6 @@
       "userId": 1
     },
     {
-      "nome": "Gowther",
-      "forca": 4,
-      "raca": "Marionete",
-      "image": "https://img.quizur.com/f/img61dc5d83b18ac0.91176254.jpg?lastEdited=1641831828",
-      "id": 6,
-      "userId": 2
-    },
-    {
       "nome": "King",
       "forca": 5,
       "raca": "Fada",
@@ -53,12 +45,20 @@
       "id": 7
     },
     {
-      "nome": "Gowther 2",
+      "nome": "Gowther",
       "forca": 4,
       "raca": "Marionete",
       "image": "https://img.quizur.com/f/img61dc5d83b18ac0.91176254.jpg?lastEdited=1641831828",
       "userId": 1,
       "id": 8
+    },
+    {
+      "nome": "Ban",
+      "forca": 4,
+      "raca": "Humano",
+      "image": "https://th.bing.com/th/id/R.95260d338ca239a3fefdad676862ad9d?rik=hvrd%2bAOQQwG%2bAw&pid=ImgRaw&r=0",
+      "userId": 2,
+      "id": 9
     }
   ]
 }
