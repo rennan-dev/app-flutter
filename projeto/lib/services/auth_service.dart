@@ -51,26 +51,6 @@ class AuthService {
     return true;
   }
 
-  Future<bool> checkUserExists({required String email}) async {
-    final requestUrl = Uri.parse("${url}users?email=$email");
-    final response = await client.get(requestUrl);
-
-    if (response.statusCode == 200) {
-      try {
-        final data = jsonDecode(response.body);
-
-        if (data is List && data.isNotEmpty) {
-          return true;
-        }
-        return false;
-      } catch (e) {
-        throw HttpException("Erro ao processar a resposta: $e");
-      }
-    } else {
-      throw HttpException("Erro ao verificar usuário: ${response.body}");
-    }
-  }
-
   saveUserInfos(String body) async {
     Map<String,dynamic> map = json.decode(body);
 

@@ -42,14 +42,25 @@ class _InitialScreenState extends State<InitialScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Personagens'),
+        title: const Text('Lista de Personagens', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             onPressed: () => setState(() {}),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: Colors.white,),
           ),
         ],
-        backgroundColor: Colors.lightGreen,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
       ),
       drawer: Drawer(
         child: ListView(children: [
@@ -187,7 +198,7 @@ class _InitialScreenState extends State<InitialScreen> {
             });
           });
         },
-        backgroundColor: const Color(0xFF05A52F),
+        backgroundColor: const Color(0xFF8E2DE2),
         child: const Icon(Icons.add, color: Colors.white),
       ),
 

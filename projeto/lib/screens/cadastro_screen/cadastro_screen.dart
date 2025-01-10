@@ -110,7 +110,7 @@ class CadastroScreen extends StatelessWidget {
                       ),
                       child: const Text(
                         "Sign Up",
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ),
@@ -152,26 +152,19 @@ class CadastroScreen extends StatelessWidget {
     String password = passwordController.text;
     String confirmPassword = confirmPasswordController.text;
 
-    if(email.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       showExceptionDialog(context, content: "Email e senha não podem estar vazios.");
       return;
     }
 
-    if(password != confirmPassword) {
+    if (password != confirmPassword) {
       showExceptionDialog(context, content: "A senha e a confirmação devem ser iguais.");
       return;
     }
 
-    //verificar se o usuário já existe
+    // Cadastrar usuário diretamente
     authService
-        .checkUserExists(email: email)
-        .then((userExists) {
-      if (userExists) {
-        throw HttpException("Já existe um usuário com este email.");
-      }
-      //cadastrar usuário
-      return authService.register(email: email, password: password);
-    })
+        .register(email: email, password: password)
         .then((resultLogin) {
       if (resultLogin) {
         Navigator.pushReplacementNamed(context, '/initial');

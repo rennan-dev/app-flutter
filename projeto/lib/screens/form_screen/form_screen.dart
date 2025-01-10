@@ -77,12 +77,24 @@ class _FormScreenState extends State<FormScreen> {
       key: _formKey,
       child: Scaffold(
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
           title: Text(
+            style: const TextStyle(color: Colors.white),
             widget.personagem == null
                 ? 'Adicionar Personagem'
                 : 'Editar Personagem',
           ),
-          backgroundColor: Colors.lightGreen,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -90,7 +102,11 @@ class _FormScreenState extends State<FormScreen> {
               height: 650,
               width: 375,
               decoration: BoxDecoration(
-                color: Colors.lightGreen,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(width: 4),
               ),

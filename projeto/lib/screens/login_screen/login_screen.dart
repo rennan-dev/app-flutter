@@ -71,18 +71,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Forgot password?",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 20),
                 // Login Button
                 SizedBox(

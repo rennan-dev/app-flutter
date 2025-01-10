@@ -67,7 +67,7 @@ class _PersonagemState extends State<Personagem> {
       child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.lightGreen,), height: 140, ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: const Color(0xFF4A00E0)), height: 140, ),
           Column(
             children: [
               Container(
@@ -104,7 +104,7 @@ class _PersonagemState extends State<Personagem> {
                           });
                         }, style: ElevatedButton.styleFrom(
                           minimumSize: const Size(40, 40),
-                          backgroundColor: Colors.green,
+                          backgroundColor: const Color(0xFF8E2DE2),
                           shape: const CircleBorder(),
                         ),
                           child: const Icon(Icons.arrow_drop_up_outlined, color: Colors.white),
@@ -122,7 +122,7 @@ class _PersonagemState extends State<Personagem> {
                             });
                           }, style: ElevatedButton.styleFrom(
                             minimumSize: const Size(40, 40),
-                            backgroundColor: Colors.green,
+                            backgroundColor: const Color(0xFF8E2DE2),
                             shape: const CircleBorder(),
                           ),
                           child: const Icon(Icons.arrow_drop_down_outlined, color: Colors.white),
