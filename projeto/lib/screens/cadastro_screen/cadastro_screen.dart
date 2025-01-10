@@ -1,11 +1,20 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const CadastroScreen());
-}
+import '../../services/auth_service.dart';
+import '../commom/exception_dialog.dart';
 
 class CadastroScreen extends StatelessWidget {
-  const CadastroScreen({super.key});
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  final AuthService authService = AuthService();
+
+  CadastroScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +47,7 @@ class CadastroScreen extends StatelessWidget {
                   const SizedBox(height: 40),
                   // Email Input
                   TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -52,6 +62,7 @@ class CadastroScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   // Password Input
                   TextField(
+                    controller: passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -68,6 +79,7 @@ class CadastroScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   // Confirm Password Input
                   TextField(
+                    controller: confirmPasswordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -87,7 +99,9 @@ class CadastroScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        cadastrarUsuario(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
                         shape: RoundedRectangleBorder(
@@ -96,7 +110,7 @@ class CadastroScreen extends StatelessWidget {
                       ),
                       child: const Text(
                         "Sign Up",
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ),
@@ -111,7 +125,9 @@ class CadastroScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.white),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/login');
+                        },
                         child: const Text(
                           "Log in",
                           style: TextStyle(
@@ -129,5 +145,46 @@ class CadastroScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  cadastrarUsuario(BuildContext context) {
+    String email = emailController.text.trim();
+    String password = passwordController.text;
+    String confirmPassword = confirmPasswordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      showExceptionDialog(context, content: "Email e senha não podem estar vazios.");
+      return;
+    }
+
+    if (password != confirmPassword) {
+      showExceptionDialog(context, content: "A senha e a confirmação devem ser iguais.");
+      return;
+    }
+
+    // Cadastrar usuário diretamente
+    authService
+        .register(email: email, password: password)
+        .then((resultLogin) {
+      if (resultLogin) {
+        Navigator.pushReplacementNamed(context, '/initial');
+      }
+    })
+        .catchError(
+          (error) {
+        var innerError = error as HttpException;
+        showExceptionDialog(context, content: innerError.message);
+      },
+      test: (error) => error is HttpException,
+    )
+        .catchError(
+          (error) {
+        showExceptionDialog(context, content: "O servidor demorou para responder, tente novamente mais tarde.");
+      },
+      test: (error) => error is TimeoutException,
+    )
+        .catchError((error) {
+      showExceptionDialog(context, content: "Ocorreu um erro inesperado: $error");
+    });
   }
 }

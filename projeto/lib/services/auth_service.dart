@@ -1,17 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:entregar/services/webclient.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_interceptor/http/intercepted_client.dart';
-
-import 'http_interceptors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  //TODO: modularizar o end point
-  static const String url = "http://10.90.51.19:3000/";
 
-  http.Client client = InterceptedClient.build(interceptors: [LoggerInterceptor()]);
+  String url = Webclient.url;
+  http.Client client = Webclient().client;
 
-  login({required String email, required String password}) async {
+  Future<bool> login({required String email, required String password}) async {
     http.Response response = await client.post(
       Uri.parse('${url}login'),
       body: {
@@ -20,11 +19,52 @@ class AuthService {
       }
     );
     if(response.statusCode!=200) {
+      String content = json.decode(response.body);
+      switch(content) {
+        case "Cannot find user":
+          throw UserNotFindException();
+      }
       throw HttpException(response.body);
     }
+
+    saveUserInfos(response.body);
+    return true;
   }
 
-  register() {
+  Future<bool> register({required String email, required String password}) async {
+    http.Response response = await client.post(
+      Uri.parse('${url}register'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
 
+    if (response.statusCode != 201) {
+      throw HttpException(response.body);
+    }
+
+    saveUserInfos(response.body);
+    return true;
   }
+
+  saveUserInfos(String body) async {
+    Map<String,dynamic> map = json.decode(body);
+
+    String token = map["accessToken"];
+    String email = map["user"]["email"];
+    int id = map["user"]["id"];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("accessToken", token);
+    prefs.setString("email", email);
+    prefs.setInt("id", id);
+  }
+}
+
+class UserNotFindException implements Exception {
+
 }

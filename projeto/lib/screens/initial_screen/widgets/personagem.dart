@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../helpers/logout.dart';
 import '../../commom/confirmation_dialog.dart';
 import '../../commom/exception_dialog.dart';
 import 'forca_personagem.dart';
@@ -13,10 +15,11 @@ class Personagem extends StatefulWidget {
   final int forca;
   final String raca;
   final String image;
-  final VoidCallback? onRefresh; // Torne onRefresh opcional
+  final VoidCallback? onRefresh;
+  final int userId;
 
   // Construtor padrão com onRefresh opcional
-  Personagem(this.nome, this.forca, this.raca, this.image, {this.id, this.onRefresh, super.key});
+  Personagem(this.nome, this.forca, this.raca, this.image, this.userId, {this.id, this.onRefresh, super.key});
 
   int life = 10;
 
@@ -26,19 +29,16 @@ class Personagem extends StatefulWidget {
         nome = map["nome"],
         forca = map["forca"],
         raca = map["raca"],
-        image = map["image"];
-
-  // Função padrão para onRefresh, se não for passada
-  static void _defaultOnRefresh() {
-    // Função vazia ou qualquer comportamento padrão
-  }
+        image = map["image"],
+        userId = map["userId"];
 
   Map<String, dynamic> toMap() {
     final map = {
       "nome": nome,
       "forca": forca,
       "raca": raca,
-      "image": image
+      "image": image,
+      "userId": userId
     };
 
     if (id != null) {
@@ -67,7 +67,7 @@ class _PersonagemState extends State<Personagem> {
       child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.lightGreen,), height: 140, ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: const Color(0xFF4A00E0)), height: 140, ),
           Column(
             children: [
               Container(
@@ -104,7 +104,7 @@ class _PersonagemState extends State<Personagem> {
                           });
                         }, style: ElevatedButton.styleFrom(
                           minimumSize: const Size(40, 40),
-                          backgroundColor: Colors.green,
+                          backgroundColor: const Color(0xFF8E2DE2),
                           shape: const CircleBorder(),
                         ),
                           child: const Icon(Icons.arrow_drop_up_outlined, color: Colors.white),
@@ -117,14 +117,12 @@ class _PersonagemState extends State<Personagem> {
                           onLongPress: () {
                             setState(() {
                               if (widget.life == 0) {
-                                //PersonagemDao().delete(widget.nome);
-                                print('Personagem ${widget.nome} sem vida.');
                                 removePersonagem(context, widget.id);
                               }
                             });
                           }, style: ElevatedButton.styleFrom(
                             minimumSize: const Size(40, 40),
-                            backgroundColor: Colors.green,
+                            backgroundColor: const Color(0xFF8E2DE2),
                             shape: const CircleBorder(),
                           ),
                           child: const Icon(Icons.arrow_drop_down_outlined, color: Colors.white),
@@ -156,36 +154,44 @@ class _PersonagemState extends State<Personagem> {
   }
 
   void removePersonagem(BuildContext context, String? personagemId) {
-    if (personagemId == null || personagemId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("ID do personagem inválido")),
-      );
-      return;
-    }
 
-    CharacterService personagemService = CharacterService();
-    showConfirmationDialog(
-      context,
-      content: "Deseja excluir personagem?",
-      affirmativeOption: "Excluir",
-    ).then((confirmar) {
-      if (confirmar != null && confirmar) {
-        personagemService.delete(personagemId).then((success) {
-          if (success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Personagem removido com sucesso.")),
-            );
-            if (widget.onRefresh != null) {
-              widget.onRefresh!(); // Só chama se onRefresh não for nulo
-            }
-          }
-        }).catchError((error) {
-          var innerError = error is HttpException ? error : null;
-          if (innerError != null) {
-            showExceptionDialog(context, content: innerError.message);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Erro ao tentar remover personagem")),
+    SharedPreferences.getInstance().then((prefs) {
+      String? token = prefs.getString("accessToken");
+      if(token!=null) {
+        if (personagemId == null || personagemId.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("ID do personagem inválido")),
+          );
+          return;
+        }
+
+        CharacterService personagemService = CharacterService();
+        showConfirmationDialog(
+          context,
+          content: "Deseja excluir personagem?",
+          affirmativeOption: "Excluir",
+        ).then((confirmar) {
+          if (confirmar != null && confirmar) {
+            personagemService.delete(personagemId, token).then((success) {
+              if (success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Personagem removido com sucesso.")),
+                );
+                if (widget.onRefresh != null) {
+                  widget.onRefresh!(); // Só chama se onRefresh não for nulo
+                }
+              }
+            }).catchError(
+                  (error) {
+                logout(context);
+              },
+              test: (error) => error is TokenNotValidException,
+            ).catchError(
+                    (error) {
+                  var innerError = error as HttpException;
+                  showExceptionDialog(context, content: innerError.message);
+                },
+                test: (error) => error is HttpException
             );
           }
         });

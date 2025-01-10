@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:entregar/screens/commom/exception_dialog.dart';
 import 'package:entregar/screens/initial_screen/widgets/personagem.dart';
 import 'package:entregar/services/character_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/logout.dart';
 import '../form_screen/form_screen.dart';
 
 class InitialScreen extends StatefulWidget {
@@ -12,24 +17,55 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
+
   final CharacterService characterService = CharacterService();
 
   Future<List<Personagem>> _getAllCharacters() async {
-    return await characterService.getAllCharacters();
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("accessToken");
+    final email = prefs.getString("email");
+    final id = prefs.getInt("id");
+
+    if (token != null && email != null && id != null) {
+      return await characterService.getAllCharacters(
+        id: id.toString(),
+        token: token,
+      );
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+      return [];
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Personagens'),
+        title: const Text('Lista de Personagens', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             onPressed: () => setState(() {}),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: Colors.white,),
           ),
         ],
-        backgroundColor: Colors.lightGreen,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(children: [
+          ListTile(onTap: () { logout(context); }, title: const Text("Sair"), leading: const Icon(Icons.logout),),
+        ],),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 70),
@@ -72,6 +108,7 @@ class _InitialScreenState extends State<InitialScreen> {
                                   formContext: context,
                                   personagem: personagem,
                                   isEditing: true,
+                                  userId: personagem.userId,
                                 ),
                               ),
                             ).then((value) {
@@ -86,13 +123,25 @@ class _InitialScreenState extends State<InitialScreen> {
                                 );
                               }
                               setState(() {}); // Atualiza a lista de personagens
-                            });
+                            }).catchError(
+                                (error) {
+                                  logout(context);
+                                },
+                                test: (error) => error is TokenNotValidException,
+                            ).catchError(
+                                (error) {
+                                  var innerError = error as HttpException;
+                                  showExceptionDialog(context, content: innerError.message);
+                                },
+                                test: (error) => error is HttpException
+                            );
                           },
                           child: Personagem(
                             personagem.nome,
                             personagem.forca,
                             personagem.raca,
                             personagem.image,
+                            personagem.userId,
                             id: personagem.id,
                             onRefresh: () => setState(() {}), // Atualiza ao remover personagem
                           ),
@@ -126,28 +175,39 @@ class _InitialScreenState extends State<InitialScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (contextNew) => FormScreen(formContext: context, isEditing: false,),
-            ),
-          ).then((value) {
-            if (value != null && value is String && value.isNotEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(value),
-                  backgroundColor: value.contains('sucesso')
-                      ? Colors.green
-                      : Colors.red,
+          returnUserId().then((userId) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (contextNew) => FormScreen(
+                  formContext: context,
+                  isEditing: false,
+                  userId: userId,
                 ),
-              );
-            }
-            setState(() {}); // Atualiza a lista de personagens
+              ),
+            ).then((value) {
+              if (value != null && value is String && value.isNotEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(value),
+                    backgroundColor: value.contains('sucesso') ? Colors.green : Colors.red,
+                  ),
+                );
+              }
+              setState(() {}); // Atualiza a lista de personagens
+            });
           });
         },
-        backgroundColor: const Color(0xFF05A52F),
+        backgroundColor: const Color(0xFF8E2DE2),
         child: const Icon(Icons.add, color: Colors.white),
       ),
+
     );
   }
+}
+
+Future<int> returnUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  final id = prefs.getInt("id");
+  return id ?? -1;
 }
